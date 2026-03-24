@@ -662,29 +662,45 @@
         </section>
 
         <section class="slide" data-title="Money flow">
-          <div class="slide-grid">
-            <div>
-              <div class="eyebrow">Payment flow</div>
-              <h3>How money moves in Phase 1</h3>
-              <p class="lede">
-                The inbound flow is simple: client sends USD via SWIFT, OpenPayd receives the
-                funds, Tribe gets the webhook, credits the USD balance, and the value sweeps to
-                the master account. Non-USD inbound should not be auto-converted. 
-              </p>
-            </div>
+  <div class="slide-grid">
 
-            <div class="card">
-              <div class="section-title">Inbound processing</div>
-              <div class="flow">
-                <div class="step"><div class="num">1</div><div><h4>Client sends USD</h4><p>SWIFT MT103 inbound only, first-party funding only.</p></div></div>
-                <div class="step"><div class="num">2</div><div><h4>OpenPayd receives funds</h4><p>Non-USD should be rejected or held for manual handling.</p></div></div>
-                <div class="step"><div class="num">3</div><div><h4>Tribe credits ledger</h4><p>Webhook parsing, fee logic, and return logic are required.</p></div></div>
-                <div class="step"><div class="num">4</div><div><h4>Sweep to master account</h4><p>Funds move into the master structure and become available for use.</p></div></div>
-              </div>
-            </div>
-          </div>
-        </section>
+    <!-- LEFT SIDE -->
+    <div class="hero">
+      <div class="eyebrow">Payment flow</div>
+      <h2>How money moves</h2>
+      <p class="lede">
+        USD funds flow via SWIFT into OpenPayd, are credited via Tribe,
+        and become instantly usable via the card.
+      </p>
 
+      <div class="tagrow">
+        <span class="tag">USD only</span>
+        <span class="tag">Inbound SWIFT</span>
+        <span class="tag">No FX</span>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE VISUAL -->
+    <div class="card" style="display:flex; align-items:center; justify-content:center;">
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:center;">
+
+        <div class="tag">Client</div>
+        <div>→</div>
+        <div class="tag">SWIFT</div>
+        <div>→</div>
+        <div class="tag">OpenPayd</div>
+        <div>→</div>
+        <div class="tag">Tribe</div>
+        <div>→</div>
+        <div class="tag">eToro Balance</div>
+        <div>→</div>
+        <div class="tag">Card Spend</div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
         <section class="slide" data-title="Stakeholders">
           <div class="slide-grid">
             <div>
