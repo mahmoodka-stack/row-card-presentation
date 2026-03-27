@@ -1,955 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RoW Card & SWIFT IBAN - Product Review</title>
-  <style>
-    :root{
-      --bg:#050816;
-      --bg2:#08111f;
-      --panel:#0d1829;
-      --panel2:#11203a;
-      --line:rgba(255,255,255,.10);
-      --text:#eef4ff;
-      --muted:#9eb2cf;
-      --accent:#64d5ff;
-      --accent2:#8b5cf6;
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#fb7185;
-      --shadow:0 24px 60px rgba(0,0,0,.35);
-      --radius:26px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1000px 700px at 12% 0%, rgba(100,213,255,.12), transparent 55%),
-        radial-gradient(900px 650px at 100% 10%, rgba(139,92,246,.16), transparent 50%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-      overflow:hidden;
-    }
-
-    .app{
-      height:100vh;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      padding:16px 22px;
-      border-bottom:1px solid var(--line);
-      background:rgba(5,8,22,.72);
-      backdrop-filter: blur(14px);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      min-width:0;
-    }
-    .logo{
-      width:46px;
-      height:46px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg, rgba(100,213,255,.20), rgba(139,92,246,.18));
-      border:1px solid rgba(255,255,255,.11);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-      font-weight:800;
-      flex:0 0 auto;
-    }
-    .brand h1{
-      margin:0;
-      font-size:15px;
-      line-height:1.2;
-      font-weight:800;
-    }
-    .brand p{
-      margin:2px 0 0;
-      color:var(--muted);
-      font-size:12px;
-    }
-
-    .nav{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .pill{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      padding:9px 13px;
-      border-radius:999px;
-      font-size:13px;
-      cursor:pointer;
-      white-space:nowrap;
-      transition:.18s ease;
-    }
-    .pill:hover{
-      transform:translateY(-1px);
-      background:rgba(100,213,255,.12);
-      border-color:rgba(100,213,255,.32);
-    }
-    .pill.active{
-      background:linear-gradient(135deg, rgba(100,213,255,.18), rgba(139,92,246,.14));
-      border-color:rgba(100,213,255,.40);
-    }
-
-    .meta{
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    .progress-wrap{
-      height:4px;
-      background:rgba(255,255,255,.06);
-      border-bottom:1px solid var(--line);
-    }
-    .progress{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg, var(--accent), var(--accent2));
-      transition:width .24s ease;
-    }
-
-    .content{
-      display:grid;
-      grid-template-columns: 300px 1fr;
-      gap:18px;
-      padding:18px;
-      min-height:0;
-    }
-
-    .sidebar,.stage{min-height:0; overflow:hidden}
-    .sidebar{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      padding:18px;
-      border-radius:var(--radius);
-      background:rgba(13,24,41,.78);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-    }
-    .sidebar h2{
-      margin:0 0 6px;
-      font-size:16px;
-    }
-    .sidebar p{
-      margin:0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.5;
-    }
-    .toc{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      overflow:auto;
-      padding-right:4px;
-    }
-    .toc-item{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      border-radius:18px;
-      padding:12px 12px 11px;
-      cursor:pointer;
-      transition:.18s ease;
-    }
-    .toc-item:hover{
-      transform:translateY(-1px);
-      border-color:rgba(100,213,255,.28);
-    }
-    .toc-item.active{
-      background:linear-gradient(135deg, rgba(100,213,255,.14), rgba(139,92,246,.10));
-      border-color:rgba(100,213,255,.38);
-    }
-    .toc-item .kicker{
-      font-size:11px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-    }
-    .toc-item .title{
-      margin-top:6px;
-      font-size:14px;
-      font-weight:800;
-      line-height:1.3;
-    }
-    .toc-item .desc{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    .help{
-      margin-top:auto;
-      padding:16px;
-      border-radius:20px;
-      border:1px solid rgba(100,213,255,.20);
-      background:linear-gradient(135deg, rgba(100,213,255,.10), rgba(139,92,246,.08));
-      color:#eaf2ff;
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .stage{
-      position:relative;
-      border-radius:var(--radius);
-      background:rgba(13,24,41,.54);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
-    .slide{
-      display:none;
-      height:100%;
-      overflow:auto;
-      padding:36px;
-    }
-    .slide.active{display:block}
-
-    .slide-grid{
-      height:100%;
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:24px;
-      align-items:stretch;
-    }
-
-    .hero{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap:18px;
-    }
-
-    .eyebrow{
-      display:inline-flex;
-      width:max-content;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.15em;
-      color:#b8dbff;
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:8px 12px;
-    }
-
-    h2{
-      margin:0;
-      font-size:clamp(34px, 4vw, 60px);
-      line-height:1.02;
-      letter-spacing:-.04em;
-    }
-    h3{
-      margin:0;
-      font-size:clamp(24px, 2.6vw, 38px);
-      line-height:1.06;
-      letter-spacing:-.03em;
-    }
-    .lede{
-      margin:0;
-      max-width:66ch;
-      color:var(--muted);
-      font-size:18px;
-      line-height:1.65;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px;
-    }
-    .metric{
-      padding:16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      min-height:96px;
-    }
-    .metric .label{
-      color:var(--muted);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-    }
-    .metric .value{
-      margin-top:8px;
-      font-size:16px;
-      line-height:1.45;
-      font-weight:800;
-    }
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:20px;
-    }
-    .section-title{
-      margin:0 0 14px;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.15em;
-      color:#b8dbff;
-    }
-
-    ul.clean{
-      margin:0;
-      padding:0;
-      list-style:none;
-      display:grid;
-      gap:12px;
-    }
-    ul.clean li{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      padding:14px 14px 14px 16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-    }
-    .dot{
-      width:11px;
-      height:11px;
-      border-radius:999px;
-      margin-top:7px;
-      flex:0 0 auto;
-      background:var(--accent);
-      box-shadow:0 0 0 4px rgba(100,213,255,.12);
-    }
-    .dot.good{background:var(--good); box-shadow:0 0 0 4px rgba(52,211,153,.12)}
-    .dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(251,191,36,.12)}
-    .dot.bad{background:var(--bad); box-shadow:0 0 0 4px rgba(251,113,133,.12)}
-
-    .li-title{margin:0;font-weight:800;line-height:1.35}
-    .li-sub{margin:4px 0 0;color:var(--muted);line-height:1.5;font-size:14px}
-
-    .tagrow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:6px;
-    }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-size:12px;
-      color:#dbeafe;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-    }
-
-    .flow{
-      display:grid;
-      gap:12px;
-    }
-    .step{
-      display:grid;
-      grid-template-columns: 42px 1fr;
-      gap:12px;
-      align-items:flex-start;
-      padding:16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-    }
-    .num{
-      width:42px;
-      height:42px;
-      display:grid;
-      place-items:center;
-      border-radius:14px;
-      background:linear-gradient(135deg, rgba(100,213,255,.17), rgba(139,92,246,.15));
-      border:1px solid rgba(255,255,255,.10);
-      font-weight:900;
-    }
-    .step h4{
-      margin:0 0 4px;
-      font-size:16px;
-    }
-    .step p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.55;
-      font-size:14px;
-    }
-
-    .split{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-    }
-
-    .timeline{
-      display:grid;
-      gap:10px;
-    }
-    .timeline-item{
-      display:grid;
-      grid-template-columns: 92px 1fr;
-      gap:14px;
-      align-items:flex-start;
-      padding:14px;
-      border-radius:18px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-    }
-    .timeline-item .phase{
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#b8dbff;
-      font-weight:800;
-    }
-    .timeline-item .when{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .timeline-item .content h4{margin:0 0 4px;font-size:16px}
-    .timeline-item .content p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
-
-    .callout{
-      margin-top:16px;
-      padding:16px;
-      border-radius:18px;
-      border:1px solid rgba(100,213,255,.25);
-      background:linear-gradient(135deg, rgba(100,213,255,.10), rgba(139,92,246,.08));
-      color:#eaf2ff;
-      line-height:1.6;
-    }
-
-    .footerbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 18px 18px;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .control-btn{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-size:13px;
-    }
-    .control-btn:hover{background:rgba(255,255,255,.07)}
-    .control-btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-    }
-
-    .visual{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100%;
-    }
-    .visual-card{
-      width:100%;
-      min-height:100%;
-      border-radius:28px;
-      padding:18px;
-      border:1px solid var(--line);
-      background:
-        radial-gradient(1200px 900px at 50% 10%, rgba(100,213,255,.08), transparent 45%),
-        rgba(255,255,255,.03);
-    }
-
-    .simple-diagram{
-      display:grid;
-      gap:12px;
-    }
-    .big-flow{
-      display:grid;
-      grid-template-columns:repeat(7,minmax(0,1fr));
-      gap:10px;
-      align-items:center;
-      margin-top:10px;
-    }
-    .arrow-box{
-      padding:12px 10px;
-      border-radius:16px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      text-align:center;
-      font-weight:800;
-      font-size:13px;
-    }
-    .arrow{
-      text-align:center;
-      color:var(--muted);
-      font-weight:900;
-      font-size:18px;
-    }
-
-    .decision-grid{
-      display:grid;
-      gap:12px;
-    }
-    .decision{
-      padding:16px;
-      border-radius:18px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-    }
-    .decision strong{
-      display:block;
-      margin-bottom:6px;
-      font-size:15px;
-    }
-    .decision span{
-      color:var(--muted);
-      line-height:1.55;
-      font-size:14px;
-      display:block;
-    }
-
-    .subtle{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .tag-cloud{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:8px;
-    }
-    .mini-badge{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:max-content;
-      padding:7px 11px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      font-size:12px;
-      color:#dbeafe;
-    }
-
-    @media (max-width: 1180px){
-      .content{grid-template-columns:1fr}
-      .sidebar{display:none}
-      .slide-grid{grid-template-columns:1fr}
-    }
-
-    @media (max-width: 760px){
-      body{overflow:auto}
-      .app{height:auto; min-height:100vh}
-      .topbar{padding:14px}
-      .content{padding:12px}
-      .slide{padding:20px}
-      .footerbar{flex-direction:column; align-items:flex-start}
-      .nav{display:none}
-      .grid-2,.split{grid-template-columns:1fr}
-      .timeline-item{grid-template-columns:1fr}
-      .big-flow{grid-template-columns:1fr}
-      .arrow{display:none}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>USD SWIFT IBAN – RoW Proposition</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:#fff;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+/* nav */
+#nav{display:flex;align-items:center;justify-content:space-between;background:#0f0f1e;padding:10px 24px;border-bottom:2px solid #534ab7;flex-shrink:0}
+#nav-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;border:1px solid #333;background:#1a1a2e;color:#aaa;transition:all .2s}
+.tab.active{background:#534ab7;color:#fff;border-color:#534ab7}
+#nav-arrows{display:flex;gap:8px;align-items:center}
+#nav-arrows button{padding:5px 14px;border-radius:5px;cursor:pointer;border:1px solid #534ab7;background:transparent;color:#fff;font-size:13px}
+#nav-arrows button:hover{background:#534ab7}
+#slide-counter{font-size:12px;color:#888;min-width:50px;text-align:center}
+/* slides */
+#stage{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:20px;background:#111}
+.slide{width:960px;min-height:540px;background:#fff;color:#1a1a2e;border-radius:10px;overflow:hidden;display:none;box-shadow:0 8px 40px rgba(0,0,0,.5);flex-direction:column}
+.slide.active{display:flex}
+/* shared header */
+.s-head{background:#1a1a2e;padding:22px 36px 16px;border-bottom:3px solid #534ab7;flex-shrink:0}
+.s-head h1{font-size:24px;font-weight:600;color:#fff;margin-bottom:4px}
+.s-head p{font-size:13px;color:#8a90b0}
+.s-body{padding:24px 36px;flex:1;display:flex;flex-direction:column;gap:16px;background:#f5f5f7}
+/* ── S1 Cover ── */
+#s1{background:linear-gradient(135deg,#1a1a2e 60%,#2a2a5e)}
+.cover-badge{display:inline-block;background:#534ab7;color:#fff;font-size:11px;padding:4px 12px;border-radius:4px;margin-bottom:16px;font-weight:600}
+.cover-title{font-size:42px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:8px}
+.cover-sub{font-size:17px;color:#8a90b0;margin-bottom:32px}
+.cover-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.cover-card{background:rgba(255,255,255,.07);border:1px solid #534ab7;border-radius:8px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.cover-card .ico{font-size:22px;flex-shrink:0}
+.cover-card b{display:block;font-size:13px;color:#fff;margin-bottom:3px}
+.cover-card span{font-size:12px;color:#8a90b0}
+.cover-footer{font-size:11px;color:#555;border-top:1px solid #2a2a4a;padding-top:12px;text-align:center}
+#s1 .s-body{background:transparent;justify-content:center;padding:36px 48px}
+/* ── S2 Two-col ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}
+.col-box{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.col-box h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.col-box ul{padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.col-box ul li{font-size:13px;line-height:1.5}
+.coral-box{background:#faece7;border:1px solid #d85a30;color:#993c1d}
+.teal-box{background:#e1f5ee;border:1px solid #1d9e75;color:#0f6e56}
+/* ── S3 Cards ── */
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1}
+.prod-card{border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.prod-card .card-icon{font-size:26px;margin-bottom:4px}
+.prod-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.prod-card ul{padding-left:16px;display:flex;flex-direction:column;gap:7px}
+.prod-card ul li{font-size:12px;line-height:1.5}
+.blue-card{background:#e6f1fb;border:1px solid #378add;color:#0c447c}
+.purple-card{background:#eeedfe;border:1px solid #7f77dd;color:#3c3489}
+.teal-card{background:#e1f5ee;border:1px solid #1d9e75;color:#0f6e56}
+/* ── S4 Flow ── */
+.flow-wrap{display:grid;grid-template-columns:220px 1fr;gap:16px;flex:1}
+.flow-steps{display:flex;flex-direction:column;gap:6px}
+.fstep{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid #ddd;background:#fff;transition:all .2s;text-align:left}
+.fstep:hover{border-color:#534ab7}
+.fstep.active-step{border-width:2px}
+.fstep .num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:1px solid #ddd;background:#f5f5f7;color:#555}
+.fstep.active-step .num{color:#fff}
+.fstep .slabel b{display:block;font-size:12px;margin-bottom:1px}
+.fstep .slabel span{font-size:10px;color:#888}
+.flow-detail{border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.fd-top{display:flex;align-items:center;gap:12px}
+.fd-icon{font-size:32px}
+.fd-title b{display:block;font-size:17px;font-weight:700}
+.fd-title span{font-size:12px;opacity:.7}
+.fd-badge{margin-left:auto;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
+.fd-desc{font-size:13px;line-height:1.7}
+.fd-note{border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.5;background:rgba(255,255,255,.45)}
+.fd-note::before{content:"⚠ "}
+.flow-nav{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.flow-nav button{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:1px solid;background:rgba(255,255,255,.5);font-family:inherit}
+.flow-nav .fctr{font-size:11px;opacity:.7}
+/* ── S5 Tiers ── */
+.tier-table{width:100%;border-collapse:collapse;font-size:13px}
+.tier-table th{background:#1a1a2e;color:#fff;padding:10px 14px;font-weight:600;font-size:12px;text-align:center}
+.tier-table th:first-child{text-align:left}
+.tier-table td{padding:12px 14px;border-bottom:1px solid #e5e5e5;text-align:center}
+.tier-table td:first-child{text-align:left;font-weight:600;font-size:14px}
+.tier-table tr:nth-child(even) td{background:#f9f9fb}
+.badge{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600}
+.yes{background:#e1f5ee;color:#0f6e56}
+.no{background:#fcebeb;color:#a32d2d}
+.opt{background:#faeeda;color:#854f0b}
+.tier-note{font-size:11px;color:#888;font-style:italic;margin-top:10px}
+/* ── S6 Resp ── */
+/* reuse three-col + prod-card */
+/* ── S7 Risks ── */
+.risks-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.risk-item{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:8px;padding:11px 13px;border-left:3px solid}
+.risk-item .rsev{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+.risk-item .rtxt b{display:block;font-size:12px;margin-bottom:2px}
+.risk-item .rtxt span{font-size:11px;color:#666}
+.phase-item{border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid}
+.phase-item .ph-top{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.phase-item .ph-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;color:#fff}
+.phase-item .ph-title{font-size:13px;font-weight:700}
+.phase-item .ph-detail{font-size:12px;line-height:1.6}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#888;text-transform:uppercase;margin-bottom:8px}
+/* ── S8 Actions ── */
+.action-item{display:flex;gap:14px;align-items:center;background:#fff;border-radius:8px;padding:14px 18px;border:1px solid #e5e5e5}
+.action-owner{font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;min-width:90px;text-align:center;flex-shrink:0}
+.action-text{font-size:14px;color:#1a1a2e;line-height:1.5}
+/* print / download hint */
+#dl-bar{background:#0f0f1e;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #222;flex-shrink:0}
+#dl-bar span{font-size:11px;color:#666}
+#dl-btn{padding:6px 16px;border-radius:6px;background:#534ab7;color:#fff;border:none;cursor:pointer;font-size:12px}
+</style>
 </head>
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo">RoW</div>
-        <div>
-          <h1>RoW Card & SWIFT IBAN — Product Review</h1>
-          <p>Focused deck for the product team</p>
-        </div>
+
+<div id="nav">
+  <div id="nav-tabs"></div>
+  <div id="nav-arrows">
+    <button onclick="go(-1)">←</button>
+    <span id="slide-counter"></span>
+    <button onclick="go(1)">→</button>
+  </div>
+</div>
+
+<div id="stage">
+
+<!-- ═══════════════ SLIDE 1 – Cover ═══════════════ -->
+<div class="slide active" id="s1">
+  <div class="s-body" style="background:linear-gradient(135deg,#1a1a2e 60%,#2a2a5e);justify-content:center">
+    <span class="cover-badge">Work in Progress · Version 3.5</span>
+    <div class="cover-title">USD SWIFT IBAN + Visa Card</div>
+    <div class="cover-sub">Rest-of-World (RoW) Proposition — Phase 1</div>
+    <div class="cover-grid">
+      <div class="cover-card"><span class="ico">🌍</span><div><b>New product line</b><span>Targeting LATAM, GCC & APAC customers</span></div></div>
+      <div class="cover-card"><span class="ico">🏦</span><div><b>OpenPayd (NatWest)</b><span>USD-only SWIFT IBAN infrastructure</span></div></div>
+      <div class="cover-card"><span class="ico">💳</span><div><b>Virtual-first card</b><span>Attached USD Visa debit card</span></div></div>
+      <div class="cover-card"><span class="ico">⚙️</span><div><b>Tribe Payments</b><span>Core integration & ledger layer</span></div></div>
+    </div>
+    <div class="cover-footer">Doc Owner: Mahmood Ali Kamran &nbsp;|&nbsp; eToro Money &nbsp;|&nbsp; Confidential</div>
+  </div>
+</div>
+
+<!-- ═══════════════ SLIDE 2 – Why Now ═══════════════ -->
+<div class="slide" id="s2">
+  <div class="s-head"><h1>The problem we're solving</h1><p>Why this product matters for RoW customers</p></div>
+  <div class="s-body">
+    <div class="two-col">
+      <div class="col-box coral-box">
+        <h3>Today's pain points</h3>
+        <ul>
+          <li>Rely on fragmented local rails with no SEPA access</li>
+          <li>Funding friction across non-SEPA regions</li>
+          <li>No standardised global USD account experience</li>
+          <li>Limited cross-border banking capability</li>
+        </ul>
       </div>
-
-      <div class="nav" id="nav"></div>
-
-      <div class="meta" id="slideLabel">1 / 7</div>
-    </div>
-
-    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
-
-    <div class="content">
-      <aside class="sidebar">
-        <div>
-          <h2>Product deck map</h2>
-          <p>Use this version for your meeting with the product team. It is shorter, cleaner, and focused on product decisions.</p>
-        </div>
-        <div class="toc" id="toc"></div>
-        <div class="help">
-          <strong>How to use</strong><br>
-          Navigate with the section pills, the buttons below, or the keyboard arrows.
-        </div>
-      </aside>
-
-      <main class="stage">
-        <section class="slide" data-title="Cover">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Product review</div>
-              <h2>RoW Card & SWIFT IBAN</h2>
-              <p class="lede">
-                A product-focused view of the BRD for the upcoming meeting with the product team.
-                The launch story is simple: USD-only, inbound SWIFT only, virtual-first card, and no FX or outbound SWIFT in Phase 1.
-              </p>
-              <div class="grid-2">
-                <div class="metric">
-                  <div class="label">Launch shape</div>
-                  <div class="value">New USD account + card proposition for RoW</div>
-                </div>
-                <div class="metric">
-                  <div class="label">Phase 1</div>
-                  <div class="value">Inbound MT103 only, virtual card mandatory</div>
-                </div>
-              </div>
-              <div class="tagrow">
-                <span class="tag">Product scope</span>
-                <span class="tag">Customer journey</span>
-                <span class="tag">Card proposition</span>
-                <span class="tag">Launch decisions</span>
-              </div>
-            </div>
-
-            <div class="visual">
-              <div class="visual-card">
-                <div class="simple-diagram">
-                  <div class="section-title">What the product team needs to decide</div>
-                  <ul class="clean">
-                    <li><span class="dot good"></span><div><p class="li-title">What is the core customer promise?</p><p class="li-sub">A clean USD account for cross-border funding and spend.</p></div></li>
-                    <li><span class="dot warn"></span><div><p class="li-title">What is in Phase 1?</p><p class="li-sub">Inbound SWIFT only, virtual card first, no FX, no outbound.</p></div></li>
-                    <li><span class="dot"></span><div><p class="li-title">What has to be ready for launch?</p><p class="li-sub">Naming, customer messaging, eligibility, and support expectations.</p></div></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Opportunity">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Product opportunity</div>
-              <h3>Why this product matters</h3>
-              <p class="lede">
-                The BRD positions this as a new product line for RoW customers: a standalone USD IBAN,
-                SWIFT-only, with an attached USD Visa debit card and a virtual-first launch model.
-              </p>
-              <div class="callout">
-                The strongest product story is not "banking infrastructure." It is a simple, global USD account experience that removes funding friction and gives customers a spendable balance from day one.
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="section-title">Product goals</div>
-              <ul class="clean">
-                <li><span class="dot good"></span><div><p class="li-title">Standardize funding</p><p class="li-sub">Give RoW customers one clear USD funding route instead of fragmented local rails.</p></div></li>
-                <li><span class="dot good"></span><div><p class="li-title">Make the balance usable</p><p class="li-sub">Link the IBAN to a card so the customer can spend without extra steps.</p></div></li>
-                <li><span class="dot warn"></span><div><p class="li-title">Keep launch scope controlled</p><p class="li-sub">Avoid a broad rollout before the operating model is proven.</p></div></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Scope">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Phase 1 scope</div>
-              <h3>What is in and out</h3>
-              <p class="lede">
-                Phase 1 is intentionally narrow: USD only, SWIFT only, inbound MT103 only, virtual card mandatory,
-                no automatic FX, and no outbound SWIFT withdrawals at launch.
-              </p>
-              <div class="tagrow">
-                <span class="tag">USD only</span>
-                <span class="tag">SWIFT only</span>
-                <span class="tag">Inbound MT103</span>
-                <span class="tag">Virtual-first</span>
-                <span class="tag">No FX</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="section-title">Included vs excluded</div>
-              <ul class="clean">
-                <li><span class="dot good"></span><div><p class="li-title">Included</p><p class="li-sub">USD IBAN, inbound SWIFT, direct ledger funding, virtual card, card spend on the same ledger.</p></div></li>
-                <li><span class="dot bad"></span><div><p class="li-title">Excluded</p><p class="li-sub">Outbound SWIFT, automatic FX, SEPA, Faster Payments, and a separate wallet in Phase 1.</p></div></li>
-                <li><span class="dot warn"></span><div><p class="li-title">Future phase</p><p class="li-sub">Physical card expansion, outbound withdrawals, and any broader rail support.</p></div></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Journey">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Customer journey</div>
-              <h3>How the product works for the user</h3>
-              <p class="lede">
-                The product experience should feel straightforward: the customer receives a USD IBAN,
-                sends money in via SWIFT, sees the balance credited after settlement, and then spends from the same ledger.
-              </p>
-              <div class="callout">
-                This is a key product principle: keep the journey understandable. The product should feel like one USD account with one clear purpose, not a complex banking setup.
-              </div>
-            </div>
-
-            <div class="visual">
-              <div class="visual-card">
-                <div class="simple-diagram">
-                  <div class="section-title">Journey flow</div>
-                  <div class="big-flow">
-                    <div class="arrow-box">Customer</div>
-                    <div class="arrow">&rarr;</div>
-                    <div class="arrow-box">SWIFT MT103</div>
-                    <div class="arrow">&rarr;</div>
-                    <div class="arrow-box">USD IBAN</div>
-                    <div class="arrow">&rarr;</div>
-                    <div class="arrow-box">Card spend</div>
-                  </div>
-
-                  <div class="diagram-steps" style="display:grid;gap:10px;margin-top:18px;">
-                    <div class="step">
-                      <div class="num">1</div>
-                      <div>
-                        <h4>Receive the account</h4>
-                        <p>Customer gets a standalone USD IBAN and a virtual card by default.</p>
-                      </div>
-                    </div>
-                    <div class="step">
-                      <div class="num">2</div>
-                      <div>
-                        <h4>Fund via SWIFT</h4>
-                        <p>Inbound MT103 only. No automatic FX and no third-party inbound funding.</p>
-                      </div>
-                    </div>
-                    <div class="step">
-                      <div class="num">3</div>
-                      <div>
-                        <h4>Spend from the same balance</h4>
-                        <p>The same USD ledger funds the card, making the value proposition easy to explain.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Decisions">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Product decisions</div>
-              <h3>What the team should align on</h3>
-              <p class="lede">
-                The BRD still leaves a few product decisions open. These are the ones worth resolving in the product meeting
-                because they affect naming, customer understanding, and launch readiness.
-              </p>
-            </div>
-
-            <div class="decision-grid">
-              <div class="decision">
-                <strong>1. Naming</strong>
-                <span>How should the USD IBAN be presented to customers so it is clearly different from any existing USD trading or funding balance?</span>
-              </div>
-              <div class="decision">
-                <strong>2. Eligibility</strong>
-                <span>Should virtual card be mandatory for everyone, with physical card eligibility controlled by tier or subscription later?</span>
-              </div>
-              <div class="decision">
-                <strong>3. First-party funding rule</strong>
-                <span>How explicit should the Me-to-Me rule be in product copy, onboarding, and support flows?</span>
-              </div>
-              <div class="decision">
-                <strong>4. Customer promise</strong>
-                <span>Do we sell this as a payment account, a banking account, or a spendable USD balance with a card?</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Risks">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Product risks</div>
-              <h3>What could confuse customers</h3>
-              <p class="lede">
-                The BRD calls out the main friction points: non-USD inbound handling, SWIFT fees, transfer delays,
-                difference between IBAN funding and trading funding, and the lack of outbound from the IBAN in Phase 1.
-              </p>
-              <div class="tag-cloud">
-                <span class="mini-badge">Non-USD rejected</span>
-                <span class="mini-badge">SWIFT not instant</span>
-                <span class="mini-badge">Correspondent fees</span>
-                <span class="mini-badge">No outbound in Phase 1</span>
-                <span class="mini-badge">Me-to-Me only</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="section-title">Product guardrails</div>
-              <ul class="clean">
-                <li><span class="dot warn"></span><div><p class="li-title">Make the balance naming obvious</p><p class="li-sub">The BRD highlights a high risk of confusion between IBAN and trading balances.</p></div></li>
-                <li><span class="dot warn"></span><div><p class="li-title">Set fee expectations</p><p class="li-sub">Customers may send one amount and receive less if correspondent fees are taken in transit.</p></div></li>
-                <li><span class="dot warn"></span><div><p class="li-title">Explain delays up front</p><p class="li-sub">SWIFT is not instant, so the onboarding and support message needs to say that clearly.</p></div></li>
-                <li><span class="dot bad"></span><div><p class="li-title">Avoid launch ambiguity</p><p class="li-sub">If the product story is too broad, support and risk teams will inherit the confusion.</p></div></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide" data-title="Close">
-          <div class="slide-grid">
-            <div class="hero">
-              <div class="eyebrow">Close</div>
-              <h2>What you want from the product team</h2>
-              <p class="lede">
-                A clear agreement on the Phase 1 product shape, the customer language, and the launch boundaries.
-                Once those are set, Ops, Risk, Finance, and CS can align behind the same story.
-              </p>
-              <div class="tagrow">
-                <span class="tag">Phase 1 scope</span>
-                <span class="tag">Customer naming</span>
-                <span class="tag">Card strategy</span>
-                <span class="tag">Launch guardrails</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="section-title">Meeting outcome</div>
-              <p class="subtle">
-                Use this version to keep the discussion tight: one customer promise, one launch scope,
-                and a handful of product decisions that unblock the rest of the work.
-              </p>
-              <div class="callout">
-                Press the arrow keys or click the sections above to move through the deck.
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <div class="footerbar">
-      <div id="footerNote">Slide 1 of 7</div>
-      <div class="controls">
-        <button class="control-btn" id="prevBtn">Previous</button>
-        <button class="control-btn" id="nextBtn">Next</button>
+      <div class="col-box teal-box">
+        <h3>What this unlocks</h3>
+        <ul>
+          <li>Standardised cross-border USD funding via SWIFT MT103</li>
+          <li>Expansion into LATAM, GCC & APAC markets</li>
+          <li>Global USD account with attached Visa debit card</li>
+          <li>Foundation for future outbound SWIFT capability</li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const sections = [
-      { title: "Cover", desc: "Product review deck overview.", kicker: "Intro" },
-      { title: "Opportunity", desc: "Why this product matters.", kicker: "Why" },
-      { title: "Scope", desc: "What is in and out in Phase 1.", kicker: "Scope" },
-      { title: "Journey", desc: "How the customer uses it.", kicker: "Flow" },
-      { title: "Decisions", desc: "Product decisions to align on.", kicker: "Decisions" },
-      { title: "Risks", desc: "Potential customer confusion points.", kicker: "Risks" },
-      { title: "Close", desc: "What product needs to approve.", kicker: "End" }
-    ];
+<!-- ═══════════════ SLIDE 3 – Product Definition ═══════════════ -->
+<div class="slide" id="s3">
+  <div class="s-head"><h1>Product definition</h1><p>Three pillars of the USD SWIFT IBAN proposition</p></div>
+  <div class="s-body">
+    <div class="three-col">
+      <div class="prod-card blue-card"><div class="card-icon">🏛️</div><h3>Account</h3><ul><li>USD only — no FX, no SEPA</li><li>SWIFT rail exclusively</li><li>Standalone IBAN (no multi-currency)</li><li>Inbound MT103 (Phase 1 only)</li><li>No outbound SWIFT at launch</li></ul></div>
+      <div class="prod-card purple-card"><div class="card-icon">💳</div><h3>Card</h3><ul><li>USD Visa Debit</li><li>Virtual-first issuance</li><li>Physical card (tier-based)</li><li>Direct ledger authorisation</li><li>Apple Pay / Google Pay supported</li></ul></div>
+      <div class="prod-card teal-card"><div class="card-icon">💸</div><h3>Funding</h3><ul><li>Me-to-Me only (first-party)</li><li>No third-party inbound</li><li>No outbound SWIFT in Phase 1</li><li>Card spend debits USD ledger</li><li>1–5 day SWIFT processing time</li></ul></div>
+    </div>
+  </div>
+</div>
 
-    const slides = Array.from(document.querySelectorAll(".slide"));
-    const toc = document.getElementById("toc");
-    const nav = document.getElementById("nav");
-    const progress = document.getElementById("progress");
-    const slideLabel = document.getElementById("slideLabel");
-    const footerNote = document.getElementById("footerNote");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    let current = 0;
+<!-- ═══════════════ SLIDE 4 – Flow ═══════════════ -->
+<div class="slide" id="s4">
+  <div class="s-head"><h1>End-to-end transaction flow</h1><p>Use case: Customer in Brazil sends $100 USD to their eToro USD IBAN</p></div>
+  <div class="s-body">
+    <div class="flow-wrap">
+      <div class="flow-steps" id="flow-steps"></div>
+      <div class="flow-detail" id="flow-detail"></div>
+    </div>
+  </div>
+</div>
 
-    function renderControls() {
-      nav.innerHTML = "";
-      toc.innerHTML = "";
+<!-- ═══════════════ SLIDE 5 – Tiers ═══════════════ -->
+<div class="slide" id="s5">
+  <div class="s-head"><h1>Card eligibility model</h1><p>Virtual card is mandatory for all tiers. Physical card is tier-dependent.</p></div>
+  <div class="s-body">
+    <table class="tier-table">
+      <thead><tr><th>Tier</th><th>Virtual Card</th><th>Physical Card</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Bronze</td><td><span class="badge yes">✓ Yes</span></td><td><span class="badge no">✗ No</span></td><td>Default tier</td></tr>
+        <tr><td>Silver</td><td><span class="badge yes">✓ Yes</span></td><td><span class="badge opt">Optional (Subscription)</span></td><td>Subscription-based</td></tr>
+        <tr><td>Gold</td><td><span class="badge yes">✓ Yes</span></td><td><span class="badge opt">On request</span></td><td></td></tr>
+        <tr><td>Platinum+</td><td><span class="badge yes">✓ Yes</span></td><td><span class="badge yes">✓ Yes</span></td><td></td></tr>
+        <tr><td>Diamond</td><td><span class="badge yes">✓ Yes</span></td><td><span class="badge yes">✓ Yes (Premium)</span></td><td>Priority + premium design</td></tr>
+      </tbody>
+    </table>
+    <p class="tier-note">* Tier logic TBC — subject to final product decision</p>
+  </div>
+</div>
 
-      sections.forEach((s, i) => {
-        const pill = document.createElement("button");
-        pill.className = "pill" + (i === current ? " active" : "");
-        pill.textContent = s.title;
-        pill.onclick = () => goTo(i);
-        nav.appendChild(pill);
+<!-- ═══════════════ SLIDE 6 – Responsibilities ═══════════════ -->
+<div class="slide" id="s6">
+  <div class="s-head"><h1>Who owns what</h1><p>Responsibility allocation across OpenPayd, Tribe and eToro</p></div>
+  <div class="s-body">
+    <div class="three-col">
+      <div class="prod-card blue-card"><h3>OpenPayd</h3><ul><li>SWIFT rail enablement (NatWest)</li><li>IBAN provisioning</li><li>Webhooks & ISO20022 reason codes</li><li>Master account sweep</li><li>Sandbox provisioning</li><li>SWIFT charging</li></ul></div>
+      <div class="prod-card purple-card"><h3>Tribe Payments</h3><ul><li>Register SWIFT as new inbound scheme</li><li>Webhook parsing (MT103)</li><li>Inbound fee logic implementation</li><li>Virtual card issuance</li><li>AML & limits update</li><li>Visa settlement mapping</li></ul></div>
+      <div class="prod-card teal-card"><h3>eToro</h3><ul><li>Product definition & compliance sign-off</li><li>AML policy updates</li><li>Tier eligibility ownership</li><li>Rollout strategy governance</li><li>CS & Ops readiness</li><li>Finance reconciliation sign-off</li></ul></div>
+    </div>
+  </div>
+</div>
 
-        const item = document.createElement("div");
-        item.className = "toc-item" + (i === current ? " active" : "");
-        item.innerHTML = `
-          <div class="kicker">${s.kicker}</div>
-          <div class="title">${i + 1}. ${s.title}</div>
-          <div class="desc">${s.desc}</div>
-        `;
-        item.onclick = () => goTo(i);
-        toc.appendChild(item);
-      });
+<!-- ═══════════════ SLIDE 7 – Risks ═══════════════ -->
+<div class="slide" id="s7">
+  <div class="s-head"><h1>Key risks & delivery phases</h1><p>Top risks by severity and the three delivery phases</p></div>
+  <div class="s-body" style="flex-direction:row;gap:24px">
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+      <div class="section-label">Key risks</div>
+      <div class="risk-item" style="border-color:#e24b4a"><span class="rsev" style="background:#fcebeb;color:#a32d2d">High</span><div class="rtxt"><b>AML exposure</b><span>RoW cross-border risk — enhanced monitoring required</span></div></div>
+      <div class="risk-item" style="border-color:#e24b4a"><span class="rsev" style="background:#fcebeb;color:#a32d2d">High</span><div class="rtxt"><b>CS ticket volume</b><span>SWIFT delays, fee queries, dual-balance confusion</span></div></div>
+      <div class="risk-item" style="border-color:#ef9f27"><span class="rsev" style="background:#faeeda;color:#854f0b">Medium</span><div class="rtxt"><b>Reconciliation</b><span>OpenPayd ↔ Tribe ↔ Visa settlement framework needed</span></div></div>
+      <div class="risk-item" style="border-color:#ef9f27"><span class="rsev" style="background:#faeeda;color:#854f0b">Medium</span><div class="rtxt"><b>Non-USD inbound</b><span>No FX — rejection or manual hold required</span></div></div>
+      <div class="risk-item" style="border-color:#639922"><span class="rsev" style="background:#eaf3de;color:#3b6d11">Low</span><div class="rtxt"><b>Physical card ops</b><span>International shipping model unresolved</span></div></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+      <div class="section-label">Delivery phases</div>
+      <div class="phase-item" style="background:#eeedfe;border-color:#7f77dd"><div class="ph-top"><span class="ph-badge" style="background:#7f77dd">Phase A</span><span class="ph-title" style="color:#3c3489">Detailed design</span></div><div class="ph-detail" style="color:#534ab7">Confirm MT types · Finalise fee logic · Finalise return handling · Refined effort estimate</div></div>
+      <div class="phase-item" style="background:#e6f1fb;border-color:#378add"><div class="ph-top"><span class="ph-badge" style="background:#378add">Phase B</span><span class="ph-title" style="color:#0c447c">Build & test</span></div><div class="ph-detail" style="color:#185fa5">Tribe development · OpenPayd configuration · Sandbox & UAT testing</div></div>
+      <div class="phase-item" style="background:#e1f5ee;border-color:#1d9e75"><div class="ph-top"><span class="ph-badge" style="background:#1d9e75">Phase C</span><span class="ph-title" style="color:#0f6e56">Go live</span></div><div class="ph-detail" style="color:#0f6e56">Production enablement · Compliance approval · Volume monitoring</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SLIDE 8 – Actions ═══════════════ -->
+<div class="slide" id="s8">
+  <div class="s-head"><h1>What we need to align on</h1><p>Actions required by owner before we can progress</p></div>
+  <div class="s-body" style="gap:10px">
+    <div class="action-item"><span class="action-owner" style="background:#e6f1fb;color:#0c447c">Product</span><span class="action-text">Confirm tier eligibility logic and card rollout sequence</span></div>
+    <div class="action-item"><span class="action-owner" style="background:#fcebeb;color:#a32d2d">Compliance</span><span class="action-text">Sign off AML policy for RoW Me-to-Me inbound model</span></div>
+    <div class="action-item"><span class="action-owner" style="background:#faeeda;color:#854f0b">Finance</span><span class="action-text">Validate safeguarding structure & reconciliation framework</span></div>
+    <div class="action-item"><span class="action-owner" style="background:#e1f5ee;color:#0f6e56">CS & Ops</span><span class="action-text">Define naming convention (USD IBAN vs trading balance) and build agent scripts</span></div>
+    <div class="action-item"><span class="action-owner" style="background:#eeedfe;color:#3c3489">Tech</span><span class="action-text">Confirm Tribe effort estimate and OpenPayd sandbox timeline</span></div>
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<div id="dl-bar">
+  <span>💡 To save as PDF: File → Print → Save as PDF &nbsp;|&nbsp; For PowerPoint: screenshot each slide or copy content manually</span>
+  <button id="dl-btn" onclick="downloadHTML()">⬇ Download HTML</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const tabsEl=document.getElementById('nav-tabs');
+const labels=['1. Overview','2. Why Now','3. Product','4. Flow','5. Card Tiers','6. Responsibilities','7. Risks','8. Summary'];
+let cur=0;
+
+labels.forEach((l,i)=>{
+  const b=document.createElement('button');
+  b.className='tab'+(i===0?' active':'');
+  b.textContent=l;
+  b.onclick=()=>goTo(i);
+  tabsEl.appendChild(b);
+});
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  tabsEl.children[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(slides.length-1,n));
+  slides[cur].classList.add('active');
+  tabsEl.children[cur].classList.add('active');
+  document.getElementById('slide-counter').textContent=`${cur+1} / ${slides.length}`;
+}
+function go(d){goTo(cur+d);}
+goTo(0);
+
+// ── Flow slide data ─────────────────────────────────────────────────────────
+const flowData=[
+  {num:'1',actor:'Customer (Brazil)',sub:'Initiates transfer',icon:'👤',
+   bg:'#e6f1fb',border:'#378add',fg:'#0c447c',
+   amount:'$100.00 USD sent',amtBg:'#e6f1fb',amtFg:'#0c447c',
+   desc:'Customer logs into their Brazilian bank and initiates a $100 USD SWIFT MT103 transfer to their personal eToro USD IBAN. The sender name must match the IBAN holder name (Me-to-Me restriction).',
+   note:'Me-to-Me only — third-party inbound transfers are not permitted in Phase 1.'},
+  {num:'2',actor:'SWIFT Network',sub:'MT103 routing',icon:'🌐',
+   bg:'#eeedfe',border:'#7f77dd',fg:'#3c3489',
+   amount:'~$88–100 en route',amtBg:'#eeedfe',amtFg:'#3c3489',
+   desc:'The MT103 message travels via the SWIFT network through one or more correspondent/intermediary banks. Each hop may deduct fees from the transfer amount before it reaches NatWest.',
+   note:'Processing time: 1–5 business days depending on correspondent routing.'},
+  {num:'3',actor:'OpenPayd (NatWest)',sub:'Validates & webhooks',icon:'🏦',
+   bg:'#e1f5ee',border:'#1d9e75',fg:'#0f6e56',
+   amount:'Net amount confirmed',amtBg:'#e1f5ee',amtFg:'#0f6e56',
+   desc:'NatWest (via OpenPayd) receives the funds. OpenPayd validates the currency (USD only), parses the OUR/SHA/BEN charge type, and extracts the net credited amount. It then fires a webhook event (inbound_payment) to Tribe.',
+   note:'Non-USD inbound is held at OpenPayd — no automatic FX conversion occurs.'},
+  {num:'4',actor:'Tribe Payments',sub:'Credits customer ledger',icon:'⚙️',
+   bg:'#faeeda',border:'#ef9f27',fg:'#854f0b',
+   amount:'Ledger credited ✓',amtBg:'#faeeda',amtFg:'#854f0b',
+   desc:'Tribe parses the inbound_payment webhook, applies the scheme fee (~$12 per transaction charged by OpenPayd), and credits the net USD amount to the customer\'s USD ledger. An AML name-match check runs against the IBAN holder at this stage.',
+   note:'Scheme fee is applied here. Customer may receive less than the $100 sent due to correspondent and scheme fees.'},
+  {num:'5',actor:'USD Master Account',sub:'Funds swept & safeguarded',icon:'🏛️',
+   bg:'#e1f5ee',border:'#1d9e75',fg:'#0f6e56',
+   amount:'Safeguarded ✓',amtBg:'#e1f5ee',amtFg:'#0f6e56',
+   desc:'Funds are swept from the virtual IBAN into the eToro USD master safeguarded account held at OpenPayd. The customer\'s USD balance is now live and available for card spend. EMI safeguarding requirements are met.',
+   note:'No negative balances permitted. No pre-credit before confirmed receipt.'},
+  {num:'6',actor:'Visa Card Spend',sub:'Customer spends',icon:'💳',
+   bg:'#e6f1fb',border:'#378add',fg:'#0c447c',
+   amount:'Direct ledger debit',amtBg:'#e6f1fb',amtFg:'#0c447c',
+   desc:'Customer uses their virtual USD Visa card online or via Apple Pay / Google Pay. Each authorisation debits directly from the USD ledger. No FX conversion in Phase 1 — USD-only spending. Card transaction limits and cross-border MCC monitoring apply.',
+   note:'Card spend is the only supported outbound flow in Phase 1. Direct SWIFT withdrawals are out of scope.'},
+];
+
+let activeFlow=0;
+const stepsEl=document.getElementById('flow-steps');
+const detailEl=document.getElementById('flow-detail');
+
+function renderFlow(){
+  stepsEl.innerHTML='';
+  flowData.forEach((f,i)=>{
+    const btn=document.createElement('button');
+    btn.className='fstep'+(i===activeFlow?' active-step':'');
+    if(i===activeFlow){
+      btn.style.background=f.bg;
+      btn.style.borderColor=f.border;
+      btn.style.borderWidth='2px';
     }
+    btn.innerHTML=`<div class="num" style="${i===activeFlow?`background:${f.border};border-color:${f.border};`:''}">${f.num}</div><div class="slabel"><b style="color:${i===activeFlow?f.fg:'#1a1a2e'}">${f.actor}</b><span>${f.sub}</span></div>`;
+    btn.onclick=()=>{activeFlow=i;renderFlow();};
+    stepsEl.appendChild(btn);
+  });
 
-    function update() {
-      slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
-      progress.style.width = (((current + 1) / slides.length) * 100).toFixed(2) + "%";
-      slideLabel.textContent = `${current + 1} / ${slides.length}`;
-      footerNote.textContent = `Slide ${current + 1} of ${slides.length}`;
-      renderControls();
-      prevBtn.disabled = current === 0;
-      nextBtn.disabled = current === slides.length - 1;
-    }
+  const f=flowData[activeFlow];
+  detailEl.style.background=f.bg;
+  detailEl.style.border=`1px solid ${f.border}`;
+  detailEl.innerHTML=`
+    <div class="fd-top">
+      <span class="fd-icon">${f.icon}</span>
+      <div class="fd-title"><b style="color:${f.fg}">${f.actor}</b><span style="color:${f.fg}">${f.sub}</span></div>
+      <span class="fd-badge" style="background:${f.amtBg};color:${f.amtFg};border:1px solid ${f.border}">${f.amount}</span>
+    </div>
+    <div class="fd-desc" style="color:${f.fg}">${f.desc}</div>
+    <div class="fd-note" style="color:${f.fg}">${f.note}</div>
+    <div class="flow-nav">
+      <button onclick="flowGo(-1)" style="border-color:${f.border};color:${f.fg}" ${activeFlow===0?'disabled':''}>← Previous step</button>
+      <span class="fctr" style="color:${f.fg}">Step ${activeFlow+1} of ${flowData.length}</span>
+      <button onclick="flowGo(1)" style="border-color:${f.border};color:${f.fg}" ${activeFlow===flowData.length-1?'disabled':''}>Next step →</button>
+    </div>`;
+}
+function flowGo(d){activeFlow=Math.max(0,Math.min(flowData.length-1,activeFlow+d));renderFlow();}
+renderFlow();
 
-    function goTo(index) {
-      current = Math.max(0, Math.min(slides.length - 1, index));
-      update();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    prevBtn.addEventListener("click", () => goTo(current - 1));
-    nextBtn.addEventListener("click", () => goTo(current + 1));
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
-        if (current < slides.length - 1) goTo(current + 1);
-      }
-      if (e.key === "ArrowLeft" || e.key === "PageUp") {
-        if (current > 0) goTo(current - 1);
-      }
-      if (e.key === "Home") goTo(0);
-      if (e.key === "End") goTo(slides.length - 1);
-    });
-
-    update();
-  </script>
+// ── Download ────────────────────────────────────────────────────────────────
+function downloadHTML(){
+  const html=document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='USD_SWIFT_IBAN_RoW_Presentation.html';
+  a.click();
+}
+</script>
 </body>
 </html>
